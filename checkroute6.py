@@ -58,8 +58,7 @@ def main():
                 else:
                     append_prefix([line[1].strip(), line[-2].strip()])
                    
-    # for prefix, asn in prefix_list:
-    #     print(prefix, asn)
+   
     
     file.close()
     validate_prefix()
