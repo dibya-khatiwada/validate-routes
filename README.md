@@ -3,7 +3,7 @@
 -
 
 ## Valding routes from PCH routes collectors
-    - [https://www.pch.net/resources/Routing_Data/] 
+    - [PCH routing data](https://www.pch.net/resources/Routing_Data/)
 
     * Using the source code at https://github.com/InternetHealthReport/route-origin-validator/
 
