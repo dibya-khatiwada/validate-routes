@@ -66,11 +66,11 @@ def main():
             if re.search(prefix_v4_regex_line, line):
                 if len(list(filter(lambda item: item, line.split(' ')))) < 3:
                     # print(line)
-                    split_line = list(filter(lambda item: item, line.split(' ')))  + list(filter(lambda item: item, data[index+1].split(' ')))   
-                            
+                    split_line = list(filter(lambda item: item, line.split(' ')))  + list(filter(lambda item: item, data[index+1].split(' ')))                           
                 else:
                     split_line = list(filter(lambda item: item, line.split(' '))) 
                 append_prefix([split_line[1].strip(), split_line[-2].strip()])
+   
     file.close()
     validate_routes()
     print_results()
