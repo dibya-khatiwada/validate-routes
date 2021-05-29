@@ -1,8 +1,9 @@
 import re
 import pandas as pd
+import numpy as np
 from tabulate import tabulate
 from rov import ROV
-import numpy as np
+
 
 prefix_v4_regex_line = '\*>?\=?\ ?\ (\d+.){1,3}\d+/?\d+'
 route_list =[]
