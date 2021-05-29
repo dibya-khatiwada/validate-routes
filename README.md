@@ -12,6 +12,7 @@
     pip3 install -r requirements.txt
 
 ### Checking routes
+    cd src/
     python checkroutes4.py
     python checkroutes6.py
 
