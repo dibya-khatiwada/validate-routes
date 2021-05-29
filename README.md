@@ -2,7 +2,7 @@
 ***Work in progress***
 -
 
-### Valding BGP routes from PCH routes collectors
+### Validating BGP routes from PCH routes collectors
     - https://www.pch.net/resources/Routing_Data/ 
     - Using the source code at https://github.com/InternetHealthReport/route-origin-validator/
 
