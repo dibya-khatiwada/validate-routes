@@ -19,29 +19,14 @@ RPKI_DIR = 'db/rpki/'
 RPKI_FNAME = '*.json'
 
 DEFAULT_IRR_URLS = [
-        'ftp://ftp.radb.net/radb/dbase/altdb.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/aoltw.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/arin-nonauth.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/arin.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/bboi.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/bell.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/canarie.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/easynet.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/jpirr.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/level3.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/nestegg.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/nttcom.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/openface.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/ottix.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/panix.db.gz',
         'ftp://ftp.radb.net/radb/dbase/radb.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/reach.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/rgnet.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/risq.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/rogers.db.gz',
-        'ftp://ftp.radb.net/radb/dbase/tc.db.gz',
         'ftp://ftp.apnic.net/pub/apnic/whois/apnic.db.route.gz',
         'ftp://ftp.apnic.net/pub/apnic/whois/apnic.db.route6.gz',
+        'ftp://ftp.ripe.net/ripe/dbase/split/ripe.db.route.gz',
+        'ftp://ftp.ripe.net/ripe/dbase/split/ripe.db.route6.gz',
+        'ftp://ftp.arin.net/pub/rr/arin-nonauth.db.gz',
+        'ftp://ftp.arin.net/pub/rr/arin.db.gz',
+        'ftp://ftp.afrinic.net/pub/dbase/afrinic.db.gz',
         
         ]
 DEFAULT_RPKI_URLS = [ 
@@ -109,8 +94,11 @@ class ROV(object):
                                 # we may be in a 'descr' empty line
                                 rec[field] += '\n'+line
                                 continue
-
-                            rnode = self.roas['irr'].search_exact(rec['route'])
+                            try:    
+                                rnode = self.roas['irr'].search_exact(rec['route'])
+                            except ValueError:
+                                sys.stderr.write(f'Error in {fname}, invalid masklen!\n{rec}\n')
+                                
                             if rnode is None:
                                 rnode = self.roas['irr'].add(rec['route'])
                                 rnode.data['asn'] = []
