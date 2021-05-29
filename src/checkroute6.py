@@ -5,11 +5,7 @@ from tabulate import tabulate
 from rov import ROV
 
 
-pd.set_option('display.max_columns', None)
-
-
-
-prefix_v6_regex = '\*>?\ ?\ \d+[a-zA-Z]*'
+prefix_v6_regex_line = '\*>?\ ?\ \d+[a-zA-Z]*'
 route_list =[]
 results = []
 
@@ -65,10 +61,10 @@ def append_prefix(route):
     
 
 def main():
-    with open('../routing_data/fra6.txt', 'r') as file:
+    with open('../routing_data/ktm6.txt', 'r',16000) as file:
         data = file.readlines()
         for index, line in enumerate(data):
-            if re.search(prefix_v6_regex, line):
+            if re.search(prefix_v6_regex_line, line):
                 line = list(filter(lambda item: item, line.split(' ')))
                 if len(line) <= 3:
                     while line[-1] != 'i\n':
