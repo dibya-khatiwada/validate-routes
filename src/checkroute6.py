@@ -17,10 +17,12 @@ def print_results():
     states = ['Valid', 'Invalid', 'NotFound', 'Invalid,more-specific']
     for state in states:
         for adjstate in states:
-            print (f"IRR - {state}, RPKI - {adjstate}: {df[(df['irr'] == state) & (df['rpki'] == adjstate)].prefix.count()} prefixes")
+            new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]
+            new_df.index = np.arange(1, len(new_df)+1)
+            print (f"IRR - {state}, RPKI - {new_df.prefix.count()} prefixes")
             print("============================================================================================")
-            if df[(df['irr'] == state) & (df['rpki'] == adjstate)].prefix.count() != 0:
-                print(tabulate(df[(df['irr'] == state) & (df['rpki'] == adjstate)], headers = 'keys', tablefmt = 'psql'))
+            if new_df.prefix.count() != 0:
+                print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
             print("\n\n")
 
 def validate_routes():

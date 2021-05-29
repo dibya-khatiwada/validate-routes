@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from tabulate import tabulate
 from rov import ROV
+import numpy as np
 
 prefix_v4_regex = '\*>?\ ?\ (\d+.){1,3}\d+/?\d+'
 route_list =[]
@@ -13,10 +14,12 @@ def print_results():
     states = ['Valid', 'Invalid', 'NotFound', 'Invalid,more-specific']
     for state in states:
         for adjstate in states:
-            print (f"IRR - {state}, RPKI - {adjstate}: {df[(df['irr'] == state) & (df['rpki'] == adjstate)].prefix.count()} prefixes")
+            new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]
+            new_df.index = np.arange(1, len(new_df)+1)
+            print (f"IRR - {state}, RPKI - {new_df.prefix.count()} prefixes")
             print("============================================================================================")
-            if df[(df['irr'] == state) & (df['rpki'] == adjstate)].prefix.count() != 0:
-                print(tabulate(df[(df['irr'] == state) & (df['rpki'] == adjstate)], headers = 'keys', tablefmt = 'psql'))
+            if new_df.prefix.count() != 0:
+                print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
             print("\n\n")
 
 def validate_routes():
@@ -39,7 +42,7 @@ def append_prefix(route):
         route_list.append(route)
 
 def main():
-    with open('../routing_data/ktm.txt', 'r') as file:
+    with open('../routing_data/krt.txt', 'r') as file:
         data = file.readlines()
         for index, line in enumerate(data):
             if re.search(prefix_v4_regex, line):
