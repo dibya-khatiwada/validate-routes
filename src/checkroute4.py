@@ -4,7 +4,7 @@ from tabulate import tabulate
 from rov import ROV
 import numpy as np
 
-prefix_v4_regex = '\*>?\=?\ ?\ (\d+.){1,3}\d+/?\d+'
+prefix_v4_regex_line = '\*>?\=?\ ?\ (\d+.){1,3}\d+/?\d+'
 route_list =[]
 results = []
 
@@ -62,7 +62,7 @@ def main():
     with open('../routing_data/ktm.txt', 'r',16000) as file:
         data = file.readlines()
         for index, line in enumerate(data):
-            if re.search(prefix_v4_regex, line):
+            if re.search(prefix_v4_regex_line, line):
                 if len(list(filter(lambda item: item, line.split(' ')))) < 3:
                     # print(line)
                     split_line = list(filter(lambda item: item, line.split(' ')))  + list(filter(lambda item: item, data[index+1].split(' ')))   
