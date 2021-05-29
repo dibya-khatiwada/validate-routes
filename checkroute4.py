@@ -3,16 +3,13 @@ import pandas as pd
 from tabulate import TableFormat, tabulate
 from rov import ROV
 
-pd.set_option('display.max_columns', None)
+
 
 
 
 prefix_v4_regex = '\*>?\ ?\ (\d+.){1,3}\d+/?\d+'
-prefix_v6_regex = '\*>?\ ?\ \d{1,4}:'
 prefix_list =[]
 results = []
-
-
 
 def print_results():
     pd.set_option('display.max_columns', None)
@@ -24,7 +21,6 @@ def print_results():
             print("============================================================================================")
             if df[(df['irr'] == state) & (df['rpki'] == adjstate)].prefix.count() != 0:
                 print(tabulate(df[(df['irr'] == state) & (df['rpki'] == adjstate)], headers = 'keys', tablefmt = 'psql'))
-                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             print("\n\n")
 
 def validate_prefix():
@@ -33,15 +29,12 @@ def validate_prefix():
     rov.load_databases()
 
     for prefix, asn in prefix_list:
-        try:
+            asn = asn.replace('{', '').replace('}','')
             print(prefix,asn)
             state = rov.check(prefix, int(asn))
             state["prefix"] = prefix
             state["origin_as"] = asn
             results.append(state)
-        except ValueError:
-            pass        
-
 
 def append_prefix(prefix):
     if prefix not in prefix_list:
@@ -64,9 +57,6 @@ def main():
                     split_line = list(filter(lambda item: item, line.split(' ')))
                     
                 append_prefix([split_line[1].strip(), split_line[-2].strip()])
-            
-            
-    
     file.close()
     validate_prefix()
     print_results()
