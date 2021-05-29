@@ -17,6 +17,7 @@ def print_results():
     pd.set_option('display.max_columns', None)
     df = pd.DataFrame(results)
     states = ['Valid', 'Invalid', 'NotFound', 'Invalid,more-specific']
+    print(f"\nTotal Number of Processesed Prefixes: {len(route_list)}")
     for state in states:
         for adjstate in states:
             new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]

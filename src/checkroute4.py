@@ -12,12 +12,14 @@ def print_results():
     pd.set_option('display.max_columns', None)
     df = pd.DataFrame(results)
     states = ['Valid', 'Invalid', 'NotFound', 'Invalid,more-specific']
+    print(f"\nTotal Number of Processesed Prefixes: {len(route_list)}")
+    print("-------------------------------------------------------------------------")
     for state in states:
         for adjstate in states:
             new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]
             new_df.index = np.arange(1, len(new_df)+1)
             print (f"IRR - {state}, RPKI - {adjstate} : {new_df.prefix.count()} prefixe(s)")
-            print("============================================================================================")
+            print("-------------------------------------------------------------------------")
             if new_df.prefix.count() != 0:
                 print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
             print("\n\n")
@@ -57,7 +59,7 @@ def append_prefix(route):
     route_list.append([prefix,asn])
 
 def main():
-    with open('../routing_data/bom.txt', 'r',16000) as file:
+    with open('../routing_data/ktm.txt', 'r',16000) as file:
         data = file.readlines()
         for index, line in enumerate(data):
             if re.search(prefix_v4_regex, line):
