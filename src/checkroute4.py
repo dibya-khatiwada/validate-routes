@@ -4,7 +4,7 @@ from tabulate import tabulate
 from rov import ROV
 import numpy as np
 
-prefix_v4_regex = '\*>?\ ?\ (\d+.){1,3}\d+/?\d+'
+prefix_v4_regex = '\*>?\=?\ ?\ (\d+.){1,3}\d+/?\d+'
 route_list =[]
 results = []
 
@@ -16,7 +16,7 @@ def print_results():
         for adjstate in states:
             new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]
             new_df.index = np.arange(1, len(new_df)+1)
-            print (f"IRR - {state}, RPKI - {new_df.prefix.count()} prefixes")
+            print (f"IRR - {state}, RPKI - {adjstate} : {new_df.prefix.count()} prefixe(s)")
             print("============================================================================================")
             if new_df.prefix.count() != 0:
                 print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
@@ -27,27 +27,44 @@ def validate_routes():
     rov.download_databases()
     rov.load_databases()
     for route, asn in route_list:
-            asn = asn.replace('{', '').replace('}','')
-            state = rov.check(route, int(asn))
+            state = rov.check(route, asn)
             state["prefix"] = route
             state["origin_as"] = asn
             results.append(state)
 
+def check_route(prefix):
+    if  re.search('(\d+.){1,3}\d+\/?(\d+)?', prefix):
+        if prefix.split('.')[-1] == '0':
+            prefix = prefix + '/24'
+        return(prefix)
+            
+    else:
+        print(f"Error! : Invalid Prefix - " + prefix)
+        
+
+def check_asn(asn):
+    if re.search('^\d+', asn):
+        if asn == '32768':
+            asn = '3856'
+        return int(asn)
+    else:
+        print("Error! : Invalid ASN - " + str(asn))
+
+
 def append_prefix(route):
-    if route not in route_list:
-        if route[0].split('.')[-1] == '0':
-            route[0] = route[0] + '/24'
-        if route[1] == '32768':
-            route[1] = '3856'  
-        route_list.append(route)
+    prefix = check_route(route[0])
+    asn = check_asn(route[1])
+    route_list.append([prefix,asn])
 
 def main():
-    with open('../routing_data/krt.txt', 'r') as file:
+    with open('../routing_data/bom.txt', 'r',16000) as file:
         data = file.readlines()
         for index, line in enumerate(data):
             if re.search(prefix_v4_regex, line):
-                if len(line.split(' ')) < 3:
-                        split_line = line.split(' ') + list(filter(lambda item: item, data[index+1].split(' ')))        
+                if len(list(filter(lambda item: item, line.split(' ')))) < 3:
+                    # print(line)
+                    split_line = list(filter(lambda item: item, line.split(' ')))  + list(filter(lambda item: item, data[index+1].split(' ')))   
+                            
                 else:
                     split_line = list(filter(lambda item: item, line.split(' '))) 
                 append_prefix([split_line[1].strip(), split_line[-2].strip()])

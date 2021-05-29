@@ -1,7 +1,9 @@
 import re
 import pandas as pd
+import numpy as np
 from tabulate import tabulate
 from rov import ROV
+
 
 pd.set_option('display.max_columns', None)
 
@@ -30,19 +32,39 @@ def validate_routes():
     rov.download_databases()
     rov.load_databases()
     for route, asn in route_list:
-        asn = asn.replace('{', '').replace('}','')
-        state = rov.check(route, int(asn))
-        state["prefix"] = route
-        state["origin_as"] = asn
-        results.append(state)        
+        try:
+            # print(route,asn)
+            state = rov.check(route, int(asn))
+            state["prefix"] = route
+            state["origin_as"] = asn
+            results.append(state)
+        except TypeError:
+            print(f"Invalid prefix ASN pair ! : {route}, {asn}")   
 
-def append_prefix(route):   
-        if route[1] == '32768':
-            route[1] = '3856'        
-        route_list.append(route)
+
+def check_route(prefix):
+    if  re.search('(\d?[a-z]?)+:.*\/\d+', prefix):
+        return(prefix)        
+    else:
+        print(f"Error! : Invalid Prefix - " + prefix)
+        
+
+def check_asn(asn):
+    if re.search('^\d+', asn):
+        if asn == '32768':
+            asn = '3856'
+        return int(asn)
+    else:
+        print("Error! : Invalid ASN - " + str(asn))
+        
+def append_prefix(route):
+    prefix = check_route(route[0])
+    asn = check_asn(route[1])
+    route_list.append([prefix,asn])
+    
 
 def main():
-    with open('../routing_data/ktm6.txt', 'r') as file:
+    with open('../routing_data/fra6.txt', 'r') as file:
         data = file.readlines()
         for index, line in enumerate(data):
             if re.search(prefix_v6_regex, line):
@@ -61,4 +83,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
