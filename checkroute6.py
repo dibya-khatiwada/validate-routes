@@ -8,10 +8,8 @@ pd.set_option('display.max_columns', None)
 
 
 prefix_v6_regex = '\*>?\ ?\ \d+[a-zA-Z]*'
-prefix_list =[]
+route_list =[]
 results = []
-
-
 
 def print_results():
     pd.set_option('display.max_columns', None)
@@ -23,28 +21,26 @@ def print_results():
             print("============================================================================================")
             if df[(df['irr'] == state) & (df['rpki'] == adjstate)].prefix.count() != 0:
                 print(tabulate(df[(df['irr'] == state) & (df['rpki'] == adjstate)], headers = 'keys', tablefmt = 'psql'))
-                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             print("\n\n")
 
-def validate_prefix():
+def validate_routes():
     rov = ROV()
     rov.download_databases()
     rov.load_databases()
-
-    for prefix, asn in prefix_list:
-        # print(prefix)
-        state = rov.check(prefix, int(asn))
-        state["prefix"] = prefix
+    for route, asn in route_list:
+        asn = asn.replace('{', '').replace('}','')
+        state = rov.check(route, int(asn))
+        state["prefix"] = route
         state["origin_as"] = asn
         results.append(state)        
 
-
-def append_prefix(prefix):           
-        prefix_list.append(prefix)
+def append_prefix(route):   
+        if route[1] == '32768':
+            route[1] = '3856'        
+        route_list.append(route)
 
 def main():
-    
-    with open('routing_data/bom6.txt', 'r') as file:
+    with open('routing_data/ktm6.txt', 'r') as file:
         data = file.readlines()
         for index, line in enumerate(data):
             if re.search(prefix_v6_regex, line):
@@ -57,16 +53,9 @@ def main():
                     
                 else:
                     append_prefix([line[1].strip(), line[-2].strip()])
-                   
-   
-    
     file.close()
-    validate_prefix()
-    print_results()
-    
-    
-    
-            
+    validate_routes()
+    print_results()         
 
 if __name__ == '__main__':
     main()
