@@ -41,6 +41,7 @@ DEFAULT_IRR_URLS = [
         'ftp://ftp.radb.net/radb/dbase/rogers.db.gz',
         'ftp://ftp.radb.net/radb/dbase/tc.db.gz',
         'ftp://ftp.apnic.net/pub/apnic/whois/apnic.db.route.gz',
+        'ftp://ftp.apnic.net/pub/apnic/whois/apnic.db.route6.gz',
         
         ]
 DEFAULT_RPKI_URLS = [ 

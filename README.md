@@ -14,3 +14,5 @@
 ### Checking routes
     python checkroutes4.py
     python checkroutes6.py
+
+    See sample output in example_output.txt
