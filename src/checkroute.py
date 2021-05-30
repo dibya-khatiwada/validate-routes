@@ -42,14 +42,12 @@ def check_route(prefix):
     if  re.search('(\d+.){1,3}\d+\/?(\d+)?', prefix):
         if prefix.split('.')[-1] == '0':
             prefix = prefix + '/24'
-        return(prefix)
-     
+        return(prefix)  
     elif  re.search('(\d?[a-z]?)+:.*\/\d+', prefix):
         return(prefix)
     else:
         print(f"Error! : Invalid Prefix - " + prefix)
         
-
 def check_asn(asn):
     if re.search('^\d+', asn):
         if asn == '32768':
@@ -57,7 +55,6 @@ def check_asn(asn):
         return int(asn)
     else:
         print("Error! : Invalid ASN - " + str(asn))
-
 
 def append_prefix(route):
     prefix = check_route(route[0])
@@ -73,31 +70,30 @@ def main():
                 global route_list, results 
                 route_list = []
                 results = []
-                with open(f'../routing_data/{bgp_file}', 'r', 16000) as file:
+                with open(f'../routing_data/{bgp_file}', 'r', 1000) as file:
                     data = file.readlines()        
                     for index, line in enumerate(data):
+                        splitted_line = list(filter(lambda item: item, line.split(' ')))
                         if re.search(prefix_v4_regex_line, line):
-                            line = list(filter(lambda item: item, line.split(' ')))
-                            if len(line) < 3:
-                                line = line  + list(filter(lambda item: item, data[index+1].split(' ')))                           
-                            else:
-                                line = list(filter(lambda item: item, line.split(' '))) 
-                            
-                            append_prefix([line[1].strip(), line[-2].strip()]) 
+                            if len(splitted_line) < 3:
+                                splitted_line = splitted_line  + list(filter(lambda item: item, data[index+1].split(' ')))                           
+                            append_prefix([splitted_line[1].strip(), splitted_line[-2].strip()]) 
                         
                         elif re.search(prefix_v6_regex_line, line):
-                            line = list(filter(lambda item: item, line.split(' ')))
-                            if len(line) <= 3:
-                                while line[-1] != 'i\n':
-                                    line = (line + list(filter(lambda item: item, data[index+1].split(' '))))
+                            if len(splitted_line) <= 3:
+                                while splitted_line[-1] != 'i\n':
+                                    splitted_line = (splitted_line + list(filter(lambda item: item, data[index+1].split(' '))))
                                     index +=1
-                                    if line[-1] == '?\n':
+                                    if splitted_line[-1] == '?\n':
                                         break
-                            append_prefix([line[1].strip(), line[-2].strip()])      
+                                    
+                            append_prefix([splitted_line[1].strip(), splitted_line[-2].strip()])      
 
                 file.close()
                 validate_routes()
                 print_results()
+                
+
         
         except FileNotFoundError:
             print("Unable to locate file !")
