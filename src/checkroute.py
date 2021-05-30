@@ -70,7 +70,7 @@ def main():
                 global route_list, results 
                 route_list = []
                 results = []
-                with open(f'../routing_data/{bgp_file}', 'r', 1000) as file:
+                with open(f'../routing_data/{bgp_file}', 'rt') as file:
                     data = file.readlines()        
                     for index, line in enumerate(data):
                         splitted_line = list(filter(lambda item: item, line.split(' ')))
