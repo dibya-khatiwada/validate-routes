@@ -92,9 +92,7 @@ def main():
                 file.close()
                 validate_routes()
                 print_results()
-                
 
-        
         except FileNotFoundError:
             print("Unable to locate file !")
              
