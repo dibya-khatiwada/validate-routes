@@ -4,10 +4,8 @@ import numpy as np
 from tabulate import tabulate
 from rov import ROV
 
-
 prefix_v4_regex_line = '\*>?\=?\ ?\ (\d+\.){1,3}\d+\/?\d+'
 prefix_v6_regex_line = '\*>?\=?\ ?\ \d+[a-zA-Z]*:.*\/\d+'
-
 
 def print_results():
     pd.set_option('display.max_columns', None)
