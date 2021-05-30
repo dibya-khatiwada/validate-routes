@@ -74,15 +74,16 @@ def main():
                 route_list = []
                 results = []
                 with open(f'../routing_data/{bgp_file}', 'r', 16000) as file:
-                    data = file.readlines()
-                    
+                    data = file.readlines()        
                     for index, line in enumerate(data):
                         if re.search(prefix_v4_regex_line, line):
-                            if len(list(filter(lambda item: item, line.split(' ')))) < 3:
-                                split_line = list(filter(lambda item: item, line.split(' ')))  + list(filter(lambda item: item, data[index+1].split(' ')))                           
+                            line = list(filter(lambda item: item, line.split(' ')))
+                            if len(line) < 3:
+                                line = line  + list(filter(lambda item: item, data[index+1].split(' ')))                           
                             else:
-                                split_line = list(filter(lambda item: item, line.split(' '))) 
-                            append_prefix([split_line[1].strip(), split_line[-2].strip()]) 
+                                line = list(filter(lambda item: item, line.split(' '))) 
+                            
+                            append_prefix([line[1].strip(), line[-2].strip()]) 
                         
                         elif re.search(prefix_v6_regex_line, line):
                             line = list(filter(lambda item: item, line.split(' ')))
@@ -92,9 +93,8 @@ def main():
                                     index +=1
                                     if line[-1] == '?\n':
                                         break
-                                append_prefix([line[1].strip(), line[-2].strip()])      
-                            else:
-                                append_prefix([line[1].strip(), line[-2].strip()])
+                            append_prefix([line[1].strip(), line[-2].strip()])      
+
                 file.close()
                 validate_routes()
                 print_results()
