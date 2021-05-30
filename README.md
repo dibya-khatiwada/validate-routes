@@ -13,7 +13,5 @@
 
 ##### Checking routes
     cd src/
-    python checkroutes4.py
-    python checkroutes6.py
+    python checkroutes.py
 
-    See sample output in example_output.txt
