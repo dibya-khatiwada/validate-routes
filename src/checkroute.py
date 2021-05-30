@@ -43,11 +43,9 @@ def check_route(prefix):
         if prefix.split('.')[-1] == '0':
             prefix = prefix + '/24'
         return(prefix)
-    
-    elif  re.search('(\d+.){1,3}\d+\/?(\d+)?', prefix):
-        if prefix.split('.')[-1] == '0':
-            prefix = prefix + '/24'
-        return(prefix)       
+     
+    elif  re.search('(\d?[a-z]?)+:.*\/\d+', prefix):
+        return(prefix)
     else:
         print(f"Error! : Invalid Prefix - " + prefix)
         
