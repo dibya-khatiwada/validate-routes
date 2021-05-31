@@ -12,14 +12,14 @@ def print_results():
     df = pd.DataFrame(results)
     states = ['Valid', 'Invalid', 'NotFound', 'Invalid,more-specific']
     print(f"\nTotal Number of Processesed Prefixes: {len(route_list)}")
-    print("+----+-------+--------+------------------+-------------+")
+    print("+----+-------+--------+------------------+-------------+-------------+")
     for state in states:
         for adjstate in states:
-            new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]
+            new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate) & (df['origin_as'] == 38565)]
             new_df.index = np.arange(1, len(new_df)+1)
             if new_df.prefix.count() != 0:
-                print (f"IRR - {state}, RPKI - {adjstate} : {new_df.prefix.count()} prefixe(s)")
-                print("+----+-------+--------+------------------+-------------+")
+                print (f"IRR - {state}, RPKI - {adjstate} : {new_df.prefix.count()} prefixes")
+                print("+----+-------+--------+------------------+-------------+-------------+")
                 print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
             
 
@@ -95,6 +95,7 @@ def main():
                 file.close()
                 validate_routes()
                 print_results()
+                # print(route_list)
 
         except FileNotFoundError:
             print("Unable to locate file !")
