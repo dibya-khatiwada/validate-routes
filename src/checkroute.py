@@ -15,11 +15,14 @@ def print_results():
     print("+----+-------+--------+------------------+-------------+-------------+")
     for state in states:
         for adjstate in states:
-            new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate) & (df['origin_as'] == 38565)]
+            new_df = df[(df['irr'] == state) & (df['rpki'] == adjstate)]
             new_df.index = np.arange(1, len(new_df)+1)
             if new_df.prefix.count() != 0:
                 print (f"IRR - {state}, RPKI - {adjstate} : {new_df.prefix.count()} prefixes")
                 print("+----+-------+--------+------------------+-------------+-------------+")
+                print(tabulate(new_df.groupby('origin_as').count().sort_values(by='prefix', ascending=False).\
+                    nlargest(20, 'prefix')[["prefix"]].rename(columns={"prefix":"pfxcnt"}), headers='keys',tablefmt='github'))
+                print("\n+----+-------+--------+------------------+-------------+-------------+\n")
                 print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
             
 
@@ -71,8 +74,7 @@ def main():
             bgp_file = input("Enter the file name..: ") ## Files are located in ../routing_data/
             if bgp_file:
                 global route_list, results 
-                route_list = []
-                results = []
+                route_list, results = [],[]
                 with open(f'../routing_data/{bgp_file}', 'rt') as file:
                     data = file.readlines()        
                     for index, line in enumerate(data):
@@ -95,7 +97,6 @@ def main():
                 file.close()
                 validate_routes()
                 print_results()
-                # print(route_list)
 
         except FileNotFoundError:
             print("Unable to locate file !")
