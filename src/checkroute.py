@@ -20,6 +20,7 @@ def print_results():
             if new_df.prefix.count() != 0:
                 print (f"IRR - {state}, RPKI - {adjstate} : {new_df.prefix.count()} prefixes")
                 print("+----+-------+--------+------------------+-------------+-------------+")
+                print ("Top 20 ASNs by count: ")
                 print(tabulate(new_df.groupby('origin_as').count().sort_values(by='prefix', ascending=False).\
                     nlargest(20, 'prefix')[["prefix"]].rename(columns={"prefix":"pfxcnt"}), headers='keys',tablefmt='github'))
                 print("\n+----+-------+--------+------------------+-------------+-------------+\n")
