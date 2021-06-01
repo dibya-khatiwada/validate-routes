@@ -64,21 +64,17 @@ def check_asn(asn):
         asn = x[-1]
     else:
         asn = x[0]
-     
     if asn == '32768':
         asn = '3856'
-    
     return int(asn)
 
 def check_bogon(route):
-    bogon = False
+    bogon_flag = False
     BOGON_ASNS = [0, 23456, range(64496,131073), range(4200000000,4294967296)]
     if route[1] in BOGON_ASNS or route[1] in BOGON_ASNS[2] or route[1] in BOGON_ASNS[3] or not ipaddress.ip_network(route[0]).is_global:
-       bogon = True
-    return bogon
+       bogon_flag  = True
+    return bogon_flag
     
-
-
 def append_prefix(route):
     prefix = check_route(route[0])
     asn = check_asn(route[1])
