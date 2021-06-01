@@ -33,9 +33,6 @@ def print_results():
     bg_df.index = np.arange(1, len(bg_df)+1)
     print(tabulate(bg_df, headers='keys', tablefmt='github'))
     
-            
-
-            
 
 def initialize_radixtree():
     global rov
@@ -75,7 +72,7 @@ def check_asn(asn):
 
 def check_bogon(route):
     bogon = False
-    BOGON_ASNS = [0, 23456, 112, range(64496,131073), range(4200000000,4294967296)]
+    BOGON_ASNS = [0, 23456, range(64496,131073), range(4200000000,4294967296)]
     if route[1] in BOGON_ASNS or route[1] in BOGON_ASNS[2] or route[1] in BOGON_ASNS[3] or not ipaddress.ip_network(route[0]).is_global:
        bogon = True
     return bogon
