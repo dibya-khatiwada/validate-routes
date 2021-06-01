@@ -2,6 +2,7 @@ import re
 import pandas as pd
 import numpy as np
 from tabulate import tabulate
+import ipaddress
 from rov import ROV
 
 prefix_v4_regex_line = '\*>?\=?\ ?\ (\d+\.){1,3}\d+\/?\d+'
@@ -24,7 +25,16 @@ def print_results():
                 print(tabulate(new_df.groupby('origin_as').count().sort_values(by='prefix', ascending=False).\
                     nlargest(20, 'prefix')[["prefix"]].rename(columns={"prefix":"pfxcnt"}), headers='keys',tablefmt='github'))
                 print("\n+----+-------+--------+------------------+-------------+-------------+\n")
-                print(tabulate(new_df, headers = 'keys', tablefmt = 'psql'))
+                print(tabulate(new_df, headers = 'keys', tablefmt = 'github'))
+                print('\n')
+    print("+----+-------+--------+------------------+-------------+-------------+")
+    print("Bogon Annoucements or ASN in the AS-PATH")
+    bg_df = df[(df['bogon'] == True)] 
+    bg_df.index = np.arange(1, len(bg_df)+1)
+    print(tabulate(bg_df, headers='keys', tablefmt='github'))
+    
+            
+
             
 
 def initialize_radixtree():
@@ -34,10 +44,11 @@ def initialize_radixtree():
     rov.load_databases()
 
 def validate_routes():
-    for route, asn in route_list:
+    for route, asn,bogon_flag in route_list:
         state = rov.check(route, asn)
         state["prefix"] = route
         state["origin_as"] = asn
+        state["bogon"] = bogon_flag
         results.append(state)
 
 def check_route(prefix):
@@ -61,12 +72,21 @@ def check_asn(asn):
         asn = '3856'
     
     return int(asn)
+
+def check_bogon(route):
+    bogon = False
+    BOGON_ASNS = [0, 23456, 112, range(64496,131073), range(4200000000,4294967296)]
+    if route[1] in BOGON_ASNS or route[1] in BOGON_ASNS[2] or route[1] in BOGON_ASNS[3] or not ipaddress.ip_network(route[0]).is_global:
+       bogon = True
+    return bogon
     
+
 
 def append_prefix(route):
     prefix = check_route(route[0])
     asn = check_asn(route[1])
-    route_list.append([prefix,asn])
+    bogon_flag =  check_bogon([prefix, asn])
+    route_list.append([prefix,asn,bogon_flag])
 
 def main():
     initialize_radixtree()
