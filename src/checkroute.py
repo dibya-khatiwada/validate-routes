@@ -27,11 +27,16 @@ def print_results():
                 print("\n+----+-------+--------+------------------+-------------+-------------+\n")
                 print(tabulate(new_df, headers = 'keys', tablefmt = 'github'))
                 print('\n')
-    print("+----+-------+--------+------------------+-------------+-------------+")
-    print("Bogon Annoucements or ASN in the AS-PATH")
-    bg_df = df[(df['bogon'] == True)] 
-    bg_df.index = np.arange(1, len(bg_df)+1)
-    print(tabulate(bg_df, headers='keys', tablefmt='github'))
+    
+    ## List Bogons
+    bg_df = df[(df['bogon'] == True)]
+    if bg_df.prefix.count() != 0:
+        print("+----+-------+--------+------------------+-------------+-------------+")
+        print("Bogon Annoucements or ASN in the AS-PATH")
+        bg_df = df[(df['bogon'] == True)] 
+        bg_df.index = np.arange(1, len(bg_df)+1)
+        print(tabulate(bg_df, headers='keys', tablefmt='github'))
+        print('\n')
     
 
 def initialize_radixtree():
