@@ -113,7 +113,6 @@ def main():
                                     
                             append_prefix([splitted_line[1].strip(), splitted_line[-2].strip()])      
 
-                file.close()
                 validate_routes()
                 print_results()
 
