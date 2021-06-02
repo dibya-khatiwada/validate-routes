@@ -25,7 +25,7 @@ def print_results():
                 print(tabulate(new_df.groupby('origin_as').count().sort_values(by='prefix', ascending=False).\
                     nlargest(20, 'prefix')[["prefix"]].rename(columns={"prefix":"pfxcnt"}), headers='keys',tablefmt='github'))
                 print("\n+----+-------+--------+------------------+-------------+-------------+\n")
-                print(tabulate(new_df, headers = 'keys', tablefmt = 'github'))
+                print(tabulate(new_df[["origin_as","irr","rpki","prefix"]], headers = 'keys', tablefmt = 'github'))
                 print('\n')
     
     ## List Bogons
@@ -33,7 +33,6 @@ def print_results():
     if bg_df.prefix.count() != 0:
         print("+----+-------+--------+------------------+-------------+-------------+")
         print("Bogon Annoucements or ASN in the AS-PATH")
-        bg_df = df[(df['bogon'] == True)] 
         bg_df.index = np.arange(1, len(bg_df)+1)
         print(tabulate(bg_df, headers='keys', tablefmt='github'))
         print('\n')
@@ -75,7 +74,7 @@ def check_asn(asn):
 
 def check_bogon(route):
     bogon_flag = False
-    BOGON_ASNS = [0, 23456, range(64496,131073), range(4200000000,4294967296)]
+    BOGON_ASNS = [0, 23456, range(64496,131072), range(4200000000,4294967296)]
     if route[1] in BOGON_ASNS or route[1] in BOGON_ASNS[2] or route[1] in BOGON_ASNS[3] or not ipaddress.ip_network(route[0]).is_global:
        bogon_flag  = True
     return bogon_flag
